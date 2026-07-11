@@ -1,0 +1,33 @@
+# --- Node / Turborepo ---
+node_modules/
+.turbo/
+dist/
+.next/
+out/
+*.tsbuildinfo
+
+# --- Python / uv ---
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Editors / OS ---
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# --- Test / build artifacts ---
+coverage/
+playwright-report/
+test-results/

@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* Scan the workspace design system for utility classes. */
+@source "../../../../packages/ui/src";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Theming model (kept minimal in Phase 0, structured so themes stay easy to add):
+ *   - Components reference SEMANTIC tokens only (--background, --primary, …),
+ *     never raw colors. That indirection is what makes re-theming cheap.
+ *   - Each theme is a selector that redefines those semantic tokens:
+ *       :root         → Light  (default)
+ *       .dark         → Dark
+ *       .theme-brand  → Brand  (NorthStar palette; defined in the design-language
+ *                               phase — an intentionally empty, ready seam now)
+ *   - Themes compose: `.theme-brand.dark` layers brand + dark.
+ *   - `color-scheme` keeps native UI (scrollbars, form controls) in step.
+ */
+
+:root {
+  color-scheme: light;
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --border: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --ring: oklch(0.556 0 0);
+}
+
+/* Brand theme seam — override semantic tokens here when the palette is defined. */
+.theme-brand {
+  /* NorthStar brand tokens land in the design-language phase. */
+}
+.theme-brand.dark {
+  /* Brand + dark overrides. */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+/* Accessible default: honor users who ask for reduced motion (project-wide). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

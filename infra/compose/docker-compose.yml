@@ -1,0 +1,47 @@
+# NorthStar local infrastructure (ADR 0003 — cloud-agnostic, local-first).
+# One command:  docker compose -f infra/compose/docker-compose.yml up
+#
+# Brings up the data services the platform layer binds to (behind ports):
+#   - postgres : PostgreSQL 16 + PostGIS + pgvector
+#   - redis    : Redis 7
+# Application containers are intentionally not defined here in Phase 0.
+name: northstar
+
+services:
+  postgres:
+    build:
+      context: ../docker/postgres
+    image: northstar/postgres:16-postgis-pgvector
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-northstar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-northstar}
+      POSTGRES_DB: ${POSTGRES_DB:-northstar}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-northstar} -d ${POSTGRES_DB:-northstar}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
