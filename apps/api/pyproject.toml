@@ -9,9 +9,97 @@ dependencies = [
     "pydantic-settings>=2.6",
 ]
 
+[dependency-groups]
+dev = [
+    "ruff>=0.8",
+    "black>=24.10",
+    "mypy>=1.13",
+    "pytest>=8.3",
+    "httpx>=0.28",
+    "import-linter>=2.1",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/northstar"]
+
+# --- Quality tooling (Milestone 5) ---
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+files = ["src"]
+exclude = ['(^|/)tests/']
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests", "src/northstar/contexts"]
+addopts = "-q"
+
+# --- import-linter: mechanical enforcement of the modular-monolith boundaries (ADR 0001) ---
+
+[tool.importlinter]
+root_package = "northstar"
+
+[[tool.importlinter.contracts]]
+name = "Bounded contexts are independent except through contract.py"
+type = "independence"
+modules = [
+    "northstar.contexts.ingestion",
+    "northstar.contexts.opportunities",
+    "northstar.contexts.companies",
+    "northstar.contexts.geo",
+    "northstar.contexts.career_intelligence",
+    "northstar.contexts.identity",
+    "northstar.contexts.profile",
+    "northstar.contexts.resume",
+    "northstar.contexts.career_gps",
+    "northstar.contexts.engagement",
+    "northstar.contexts.polaris",
+]
+# The ONLY permitted cross-context edge is importing another context's contract.
+ignore_imports = [
+    "northstar.contexts.** -> northstar.contexts.*.contract",
+]
+# Phase 0 contexts have no cross-context imports yet, so the allow-rule above
+# matches nothing. Don't fail on that; it engages once contexts collaborate.
+unmatched_ignore_imports_alerting = "none"
+
+[[tool.importlinter.contracts]]
+name = "Clean Architecture layering within every context (dependencies point inward)"
+type = "layers"
+layers = [
+    "infrastructure",
+    "application",
+    "domain",
+]
+containers = [
+    "northstar.contexts.ingestion",
+    "northstar.contexts.opportunities",
+    "northstar.contexts.companies",
+    "northstar.contexts.geo",
+    "northstar.contexts.career_intelligence",
+    "northstar.contexts.identity",
+    "northstar.contexts.profile",
+    "northstar.contexts.resume",
+    "northstar.contexts.career_gps",
+    "northstar.contexts.engagement",
+    "northstar.contexts.polaris",
+]

@@ -32,7 +32,9 @@ class EngineResult[OutputT](BaseModel):
     """The uniform result every CIE engine returns."""
 
     output: OutputT
-    confidence: float = Field(ge=0.0, le=1.0, description="0..1 confidence in the output.")
+    confidence: float = Field(
+        ge=0.0, le=1.0, description="0..1 confidence in the output."
+    )
     explanation: str = Field(description="Human-readable rationale for the result.")
     trace: Trace = Field(description="Provenance back to structured data.")
     metadata: dict[str, Any] = Field(

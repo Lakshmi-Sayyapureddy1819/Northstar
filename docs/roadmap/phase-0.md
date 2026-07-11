@@ -16,7 +16,7 @@ architectural choice exists — before a single feature exists.
 | 2 | Backend Foundation — FastAPI + uv, health endpoint, config, `platform/`, `shared_kernel/`, 11 bounded contexts + `contract.py` | ✅ Complete |
 | 3 | Frontend Foundation — Next.js + TS + Tailwind + shadcn/ui, layout, health page, `(public)`/`(app)` route groups | ✅ Complete |
 | 4 | Infrastructure — Docker Compose: PostgreSQL + PostGIS + pgvector, Redis; one-command up | ✅ Complete |
-| 5 | Quality — Ruff · Black · mypy · ESLint · Prettier · tsc · pytest · Vitest · Playwright · import-linter | ⬜ Pending |
+| 5 | Quality — Ruff · Black · mypy · ESLint · Prettier · tsc · pytest · Vitest · Playwright · import-linter | ✅ Complete |
 | 6 | API Contracts — OpenAPI → generated TypeScript client → `packages/api-contracts` | ⬜ Pending |
 | 7 | CI — GitHub Actions: lint · typecheck · test · import-linter · contract generation | ⬜ Pending |
 | 8 | Verification — build, compose, CI, contracts, hooks, skills all green | ⬜ Pending |
@@ -45,9 +45,9 @@ as originally designed.
 
 **Guardrails**
 - [x] `contexts/` skeleton with empty `contract.py` per context + `shared_kernel/` + `platform/`.
-- [ ] **import-linter** in CI enforcing contract-only boundaries. *(M5)*
-- [ ] Ruff + Black + mypy (strict) for Python; ESLint + Prettier + `tsc --noEmit` for TS. *(M5 — `tsc` already green)*
-- [ ] pytest + a first engine unit test as the pattern; Vitest + Playwright scaffold on web. *(M5)*
+- [x] **import-linter** enforcing contract-only boundaries — 2 contracts (context independence + Clean Architecture layers). *(configured & passing in M5; wired into CI in M7)*
+- [x] Ruff + Black + mypy (strict) for Python; ESLint + Prettier + `tsc --noEmit` for TS.
+- [x] pytest + a first engine-pattern unit test; Vitest + Playwright scaffold on web.
 - [ ] OpenAPI → `packages/api-contracts` type generation in CI. *(M6)*
 - [ ] GitHub Actions: lint · typecheck · test · import-linter · migration check. *(M7)*
 

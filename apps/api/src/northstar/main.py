@@ -19,7 +19,9 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.app_name,
         version=settings.version,
-        description="NorthStar API — modular monolith. See docs/architecture/blueprint.md.",
+        description=(
+            "NorthStar API — modular monolith. See docs/architecture/blueprint.md."
+        ),
     )
     app.include_router(health.router)
     return app

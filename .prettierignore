@@ -1,0 +1,17 @@
+# Dependencies & build output
+**/node_modules
+**/.next
+**/dist
+**/coverage
+**/.venv
+**/.turbo
+
+# Lockfiles
+pnpm-lock.yaml
+apps/api/uv.lock
+
+# Docs are hand-formatted (incl. the frozen blueprint); Claude assets & Python are out of scope
+**/*.md
+docs
+.claude
+apps/api
