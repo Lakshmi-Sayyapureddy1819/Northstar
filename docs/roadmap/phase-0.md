@@ -20,6 +20,21 @@ architectural choice exists — before a single feature exists.
 | 6 | API Contracts — OpenAPI → generated TypeScript client → `packages/api-contracts` | ⬜ Pending |
 | 7 | CI — GitHub Actions: lint · typecheck · test · import-linter · contract generation | ⬜ Pending |
 | 8 | Verification — build, compose, CI, contracts, hooks, skills all green | ⬜ Pending |
+| 9 | Documentation Finalization — ADRs 0001–0009, blueprint review, getting-started, diagrams, final verification, retrospective, consistency review | ⬜ Pending |
+
+## Milestone 9 — Documentation Finalization (after all implementation milestones)
+
+The last milestone of Phase 0, run only once Milestones 1–8 are complete.
+Documentation is written to reflect the architecture **as implemented**, not only
+as originally designed.
+
+- **ADRs 0001–0009** — the nine principles, reflecting the as-built system.
+- **Engineering Blueprint v1.0 review** — reconcile the frozen blueprint against what was built.
+- **Getting Started guide** — proven by a fresh-clone dry run.
+- **Architecture diagrams.**
+- **Final Phase 0 verification.**
+- **Phase 0 retrospective.**
+- **Documentation consistency review.**
 
 ## Blueprint §7 checklist
 
