@@ -19,8 +19,8 @@ architectural choice exists — before a single feature exists.
 | 5 | Quality — Ruff · Black · mypy · ESLint · Prettier · tsc · pytest · Vitest · Playwright · import-linter | ✅ Complete |
 | 6 | API Contracts — OpenAPI → generated TypeScript client → `packages/api-contracts` | ✅ Complete |
 | 7 | CI — GitHub Actions: lint · typecheck · test · import-linter · contract-drift · build; uv/pnpm/turbo caching; Dependabot | ✅ Complete |
-| 8 | Verification — build, compose, CI, contracts, hooks, skills all green | ⬜ Pending |
-| 9 | Documentation Finalization — ADRs 0001–0009, blueprint review, getting-started, diagrams, final verification, retrospective, consistency review | ⬜ Pending |
+| 8 | Verification — fresh-clone gauntlet (`scripts/verify-phase0.sh`) executed green: install · infra · contracts · quality gates · backend · frontend | ✅ Complete |
+| 9 | Documentation Finalization — compliance audit, ADRs 0001–0009, principles.md, product docs, engine template, blueprint reconciliation, project history | ✅ Complete |
 
 ## Milestone 9 — Documentation Finalization (after all implementation milestones)
 
@@ -52,17 +52,17 @@ as originally designed.
 - [x] GitHub Actions: lint · typecheck · test · import-linter · contract-drift · build, with uv/pnpm/turbo caching and Dependabot. *(M7 — see `docs/engineering/continuous-integration.md`; e2e job documented as deferred to Phase 1)*
 
 **Decision record & docs**
-- [ ] ADRs **0001–0009** written (the nine principles). *(NOT yet authored — `docs/adr/` is empty. See "Open gap" below.)*
-- [x] `docs/architecture/blueprint.md` (frozen v1.0); layered `CLAUDE.md`; `.claude/` scaffold.
-- [ ] `docs/engineering/getting-started.md` proven by a fresh-clone dry run. *(M8)*
+- [x] ADRs **0001–0009** written (the nine principles, as-built) — `docs/adr/`. *(M9)*
+- [x] `docs/architecture/blueprint.md` (frozen v1.0, reconciled in M9); `docs/architecture/principles.md`; layered `CLAUDE.md`; `.claude/` scaffold.
+- [x] `docs/product/{prd,mvp-scope}.md`; `docs/engines/_template.md`; `docs/project-history.md`; `docs/architecture/compliance-audit.md`. *(M9)*
+- [x] `docs/engineering/getting-started.md` proven by a fresh-clone dry run (`scripts/verify-phase0.sh`). *(M8)*
 
-## Open gap — ADRs 0001–0009 not yet written
+## ADRs 0001–0009 — authored (M9)
 
-Blueprint §7 and §9 require the nine ADRs as a Phase 0 deliverable. They are
-referenced throughout the codebase and `CLAUDE.md` files but `docs/adr/` does
-not exist yet. This is tracked as an explicit gap to be closed within Phase 0
-(via the `update-adr` skill) — it is not covered by any of Milestones 4–8 above
-and should be scheduled before Phase 0 is declared complete.
+The nine ADRs were authored in Milestone 9 to reflect the architecture **as
+implemented** (see `docs/adr/README.md`). The earlier "open gap" is closed; the
+compliance audit (`docs/architecture/compliance-audit.md`) records the
+verification.
 
 ## Cross-cutting standards adopted in Phase 0
 

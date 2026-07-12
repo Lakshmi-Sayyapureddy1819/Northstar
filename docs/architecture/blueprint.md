@@ -146,7 +146,7 @@ northstar/
 ├── infra/{docker,compose}/     # Dockerfiles; docker-compose (Postgres+PostGIS+pgvector, Redis)
 ├── docs/                       # §5
 ├── .claude/                    # §8
-├── .github/workflows/          # lint · typecheck · test · import-linter · migration check
+├── .github/workflows/          # lint · typecheck · test · import-linter · contract-drift · build
 ├── turbo.json · package.json · CLAUDE.md
 ```
 
@@ -259,7 +259,7 @@ Goal: `git clone` → `docker compose up` → a running (empty) app with every g
 - Ruff + Black + mypy (strict) for Python; ESLint + Prettier + `tsc --noEmit` for TS.
 - pytest + a first engine unit test as the pattern; Vitest + Playwright scaffold on web.
 - OpenAPI → `packages/api-contracts` type generation in CI.
-- GitHub Actions: lint · typecheck · test · import-linter · migration check — green on an empty repo.
+- GitHub Actions: lint · typecheck · test · import-linter · contract-drift · build — green on an empty repo. (A DB migration check is added when the first Alembic migration lands; there are no DB models in Phase 0.)
 
 **Decision record & docs**
 - ADRs **0001–0009** written (the nine principles).
@@ -332,5 +332,9 @@ ADRs are immutable. Every significant architectural decision is captured **befor
 ## 10. Change Control
 
 This blueprint is **frozen at v1.0**. Phase 0 and all subsequent work proceed exactly per this document. No new architectural concept is introduced unless a new ADR formally supersedes part of this design — and every architectural change begins with **discussion → documentation → ADR**, before implementation.
+
+### Change log
+
+- **2026-07-12 — Milestone 9 blueprint review (no architectural change).** Reconciled blueprint text with the as-built system after the compliance audit (`docs/architecture/compliance-audit.md`): the CI pipeline references were corrected from "migration check" to "contract-drift · build" (§4, §7) — there are no DB models/migrations in Phase 0, and contract-drift is the more valuable gate; a DB migration check is added when the first Alembic migration lands. All nine principles were ratified as immutable ADRs 0001–0009 (`docs/adr/`), and the previously-referenced `docs/architecture/principles.md`, `docs/product/{prd,mvp-scope}.md`, and `docs/engines/_template.md` were authored. No production code changed; no principle changed.
 
 _Automation should enforce architecture, not replace architectural thinking._
