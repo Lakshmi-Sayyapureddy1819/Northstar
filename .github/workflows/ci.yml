@@ -1,0 +1,132 @@
+name: CI
+
+# Phase 0 quality gate. Every architectural guardrail is enforced here and
+# fails the build: module boundaries (import-linter), API-contract drift
+# (ADR 0008), strict typing, lint, format, and tests. See docs/roadmap/phase-0.md.
+#
+# Actions are pinned to major version tags for maintainability; SHA-pinning is a
+# planned hardening step.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend — Python quality & tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv (with dependency cache)
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Ruff (lint)
+        run: uv run ruff check .
+
+      - name: Black (format check)
+        run: uv run black --check .
+
+      - name: mypy (strict typing)
+        run: uv run mypy src
+
+      - name: import-linter (module boundaries — ADR 0001)
+        run: uv run lint-imports
+
+      - name: pytest
+        run: uv run pytest -q
+
+  frontend:
+    name: Frontend — JS quality, tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Set up Node (with pnpm store cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - name: Prettier (format check)
+        run: pnpm format:check
+
+      - name: Lint, typecheck, test, build (turbo)
+        run: pnpm exec turbo run lint typecheck test build --cache-dir=.turbo
+
+  contracts:
+    name: API contract drift (ADR 0008)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv (with dependency cache)
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Set up Node (with pnpm store cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies (Python + JS)
+        run: |
+          (cd apps/api && uv sync)
+          pnpm install --frozen-lockfile
+
+      - name: Regenerate contracts from the backend
+        run: pnpm contracts:generate
+
+      - name: Fail if committed contracts are stale
+        run: |
+          if ! git diff --exit-code -- packages/api-contracts/openapi.json packages/api-contracts/src/schema.ts; then
+            echo "::error::API contracts are out of date. Run 'pnpm contracts:generate' and commit the regenerated openapi.json + schema.ts."
+            exit 1
+          fi

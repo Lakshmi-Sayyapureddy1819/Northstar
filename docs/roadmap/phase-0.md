@@ -18,7 +18,7 @@ architectural choice exists — before a single feature exists.
 | 4 | Infrastructure — Docker Compose: PostgreSQL + PostGIS + pgvector, Redis; one-command up | ✅ Complete |
 | 5 | Quality — Ruff · Black · mypy · ESLint · Prettier · tsc · pytest · Vitest · Playwright · import-linter | ✅ Complete |
 | 6 | API Contracts — OpenAPI → generated TypeScript client → `packages/api-contracts` | ✅ Complete |
-| 7 | CI — GitHub Actions: lint · typecheck · test · import-linter · contract generation | ⬜ Pending |
+| 7 | CI — GitHub Actions: lint · typecheck · test · import-linter · contract-drift · build; uv/pnpm/turbo caching; Dependabot | ✅ Complete |
 | 8 | Verification — build, compose, CI, contracts, hooks, skills all green | ⬜ Pending |
 | 9 | Documentation Finalization — ADRs 0001–0009, blueprint review, getting-started, diagrams, final verification, retrospective, consistency review | ⬜ Pending |
 
@@ -49,7 +49,7 @@ as originally designed.
 - [x] Ruff + Black + mypy (strict) for Python; ESLint + Prettier + `tsc --noEmit` for TS.
 - [x] pytest + a first engine-pattern unit test; Vitest + Playwright scaffold on web.
 - [x] OpenAPI → `packages/api-contracts` type generation. *(M6 — one-command `pnpm contracts:generate`; committed artifacts; CI drift validation wired in M7)*
-- [ ] GitHub Actions: lint · typecheck · test · import-linter · migration check. *(M7)*
+- [x] GitHub Actions: lint · typecheck · test · import-linter · contract-drift · build, with uv/pnpm/turbo caching and Dependabot. *(M7 — see `docs/engineering/continuous-integration.md`; e2e job documented as deferred to Phase 1)*
 
 **Decision record & docs**
 - [ ] ADRs **0001–0009** written (the nine principles). *(NOT yet authored — `docs/adr/` is empty. See "Open gap" below.)*
