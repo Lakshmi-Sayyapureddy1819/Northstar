@@ -15,7 +15,9 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "openapi:export": "cd apps/api && uv run python scripts/export_openapi.py",
+    "contracts:generate": "pnpm run openapi:export && pnpm --filter @northstar/api-contracts run generate"
   },
   "devDependencies": {
     "prettier": "^3.4.2",

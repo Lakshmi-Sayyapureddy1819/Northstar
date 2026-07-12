@@ -10,7 +10,7 @@ This file holds only the **permanent architectural truths** of NorthStar. It sta
 1. **Facts First, AI Second.** Deterministic engines produce truth; AI (Polaris) only explains, summarizes, compares, answers, personalizes. AI never computes business facts.
 2. **Contract-only imports.** A bounded context may import another context's `contract.py` — never its internals. Enforced by import-linter.
 3. **Career Intelligence Engine is the only recommender.** All objective recommendations come from deterministic engines in `contexts/career_intelligence/`.
-4. **API contracts are truth.** Backend owns the OpenAPI schema; frontend consumes generated types (`packages/api-contracts`) only.
+4. **API contracts are truth.** Backend owns the OpenAPI schema; frontend consumes generated types (`packages/api-contracts`) only. **Generated files (`openapi.json`, `schema.ts`) are never hand-edited** — change the backend and run `pnpm contracts:generate`. See `docs/api/{contract-generation,versioning,evolution}.md`.
 5. **Cloud-agnostic.** Infra sits behind ports; config from env only; no vendor SDK in domain/application layers.
 6. **Anonymous-first.** The Core tier is identity-agnostic; personalization is gated on auth, never a wall in front of value.
 7. **Simplicity.** Simplest implementation that delivers the UX; add complexity only when justified by user value.

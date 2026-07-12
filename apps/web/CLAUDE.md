@@ -21,7 +21,7 @@ lib/api/                   # typed client generated from OpenAPI — DO NOT hand
 
 ## Hard rules
 
-- **Consume generated API types only** (`packages/api-contracts`). Never define your own interface for an API object. Drift = type error.
+- **Consume generated API types only** (`packages/api-contracts`, via the `openapi-fetch` client in `src/lib/api/client.ts`). Never define your own interface for an API object, and never hand-edit generated files — change the backend and run `pnpm contracts:generate`. Drift = type error.
 - **No ignored TS errors.** `tsc --noEmit` must pass. ESLint + Prettier clean.
 - **Framer Motion sparingly** — subtle, premium interactions, not spectacle.
 

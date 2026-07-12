@@ -13,8 +13,10 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@northstar/api-contracts": "workspace:^",
     "@northstar/ui": "workspace:*",
     "next": "^15.1.6",
+    "openapi-fetch": "^0.17.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

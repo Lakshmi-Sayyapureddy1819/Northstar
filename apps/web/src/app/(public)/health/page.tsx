@@ -1,5 +1,7 @@
 import { Button } from "@northstar/ui";
 
+import { BackendStatus } from "./backend-status";
+
 export default function HealthPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center gap-6 px-6">
@@ -13,6 +15,8 @@ export default function HealthPage() {
         <dd>ok</dd>
         <dt className="text-muted-foreground">Design system</dt>
         <dd>@northstar/ui linked</dd>
+        <dt className="text-muted-foreground">Backend</dt>
+        <BackendStatus />
       </dl>
 
       <div>
@@ -20,9 +24,10 @@ export default function HealthPage() {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Backend liveness is served by the API at <code>/health</code>. It will be
-        consumed here through the generated client (packages/api-contracts) after
-        Milestone 6 — the frontend never hand-defines API types.
+        Backend liveness at <code>/health</code> is consumed through the typed client in{" "}
+        <code>lib/api</code>, whose types are generated from the backend OpenAPI schema
+        (<code>packages/api-contracts</code>). The frontend never hand-defines API types
+        (ADR 0008).
       </p>
     </main>
   );

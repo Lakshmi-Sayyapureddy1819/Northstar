@@ -17,7 +17,7 @@ architectural choice exists — before a single feature exists.
 | 3 | Frontend Foundation — Next.js + TS + Tailwind + shadcn/ui, layout, health page, `(public)`/`(app)` route groups | ✅ Complete |
 | 4 | Infrastructure — Docker Compose: PostgreSQL + PostGIS + pgvector, Redis; one-command up | ✅ Complete |
 | 5 | Quality — Ruff · Black · mypy · ESLint · Prettier · tsc · pytest · Vitest · Playwright · import-linter | ✅ Complete |
-| 6 | API Contracts — OpenAPI → generated TypeScript client → `packages/api-contracts` | ⬜ Pending |
+| 6 | API Contracts — OpenAPI → generated TypeScript client → `packages/api-contracts` | ✅ Complete |
 | 7 | CI — GitHub Actions: lint · typecheck · test · import-linter · contract generation | ⬜ Pending |
 | 8 | Verification — build, compose, CI, contracts, hooks, skills all green | ⬜ Pending |
 | 9 | Documentation Finalization — ADRs 0001–0009, blueprint review, getting-started, diagrams, final verification, retrospective, consistency review | ⬜ Pending |
@@ -48,7 +48,7 @@ as originally designed.
 - [x] **import-linter** enforcing contract-only boundaries — 2 contracts (context independence + Clean Architecture layers). *(configured & passing in M5; wired into CI in M7)*
 - [x] Ruff + Black + mypy (strict) for Python; ESLint + Prettier + `tsc --noEmit` for TS.
 - [x] pytest + a first engine-pattern unit test; Vitest + Playwright scaffold on web.
-- [ ] OpenAPI → `packages/api-contracts` type generation in CI. *(M6)*
+- [x] OpenAPI → `packages/api-contracts` type generation. *(M6 — one-command `pnpm contracts:generate`; committed artifacts; CI drift validation wired in M7)*
 - [ ] GitHub Actions: lint · typecheck · test · import-linter · migration check. *(M7)*
 
 **Decision record & docs**

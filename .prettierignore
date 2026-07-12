@@ -15,3 +15,7 @@ apps/api/uv.lock
 docs
 .claude
 apps/api
+
+# Generated API contracts — backend owns the source (ADR 0008); never format generated output
+packages/api-contracts/src/schema.ts
+packages/api-contracts/openapi.json
