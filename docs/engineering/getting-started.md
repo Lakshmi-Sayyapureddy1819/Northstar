@@ -99,3 +99,5 @@ These are exactly the checks enforced in `.github/workflows/ci.yml`
 - Roadmap & milestones: `docs/roadmap/phase-0.md`.
 - CI: `docs/engineering/continuous-integration.md`.
 - API contracts: `docs/api/`.
+- Why each quality tool exists: `docs/engineering/quality-philosophy.md`.
+- Why the import-linter contracts exist: `docs/engineering/module-boundaries.md`.
