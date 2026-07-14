@@ -82,3 +82,12 @@ assumed — surfacing the break at build time.
   result of the review; the one fix it produced (removing the unused
   `SqlAlchemyCompanyReader` adapter) was internal to `companies` and does not
   touch the API contract.
+
+## Verified (Phase 1, Slice 2 — zero-drift slice)
+
+- Slice 2 (Seed Hyderabad Dataset) adds no endpoints — it's a data-only
+  slice (`geo` context + a seed script). Regenerating the contract after the
+  change produced **no diff** (`git diff --exit-code` clean on both
+  `openapi.json` and `schema.ts`), confirmed explicitly rather than assumed —
+  worth noting as a slice can legitimately touch domain/infrastructure code
+  without the contract drift check having anything to say about it.

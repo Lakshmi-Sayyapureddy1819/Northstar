@@ -13,6 +13,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from northstar.contexts.companies.infrastructure import (
     models as companies_models,  # noqa: E402,F401
 )
+from northstar.contexts.geo.infrastructure import (
+    models as geo_models,  # noqa: E402,F401
+)
 from northstar.platform.config import get_settings  # noqa: E402
 from northstar.platform.db import Base  # noqa: E402
 

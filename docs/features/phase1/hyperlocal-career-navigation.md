@@ -1,10 +1,14 @@
 # Phase 1 — Hyperlocal Career Navigation (Feature Specification)
 
 > **Status:** Approved. Slice 1 (Company Foundation) implemented, verified,
-> Slice-Boundary-reviewed, and complete — see `docs/roadmap/phase-1.md` for
-> per-slice status. Slices 2–5 not yet started. Traces to
-> `docs/product/prd.md` and `docs/product/mvp-scope.md`; implements blueprint
-> §6 Phase 1 ("Data / product identity"). Does not modify the frozen
+> Slice-Boundary-reviewed, complete, and tagged `phase1-slice1`. **Execution
+> order revised 2026-07-14** (see Rollout Plan) — Seed Hyderabad Dataset now
+> runs second and Map Experience third, ahead of Opportunity Foundation, so a
+> visible map experience lands as early as possible. Architecture, contexts,
+> and ADRs are unchanged; only the build sequence and each slice's content
+> boundary shifted accordingly. Traces to `docs/product/prd.md` and
+> `docs/product/mvp-scope.md`; implements blueprint §6 Phase 1 ("Data /
+> product identity"). Does not modify the frozen
 > `docs/architecture/blueprint.md` or any ADR — it builds inside the
 > boundaries ADRs 0001–0009 already fixed.
 
@@ -392,21 +396,55 @@ follow-up.
 
 ## Rollout Plan
 
-Sequential, one slice at a time, each independently demoable and committed
-separately (per the Development Strategy in the kickoff brief):
+> **Execution order revised after Slice 1 (2026-07-14).** Same five slices,
+> same architecture, no new contexts, no ADR change — only the sequence
+> changed, to put a visible "Google Maps for Careers" product moment on
+> screen as early as possible rather than last. New order:
+>
+> 1. Company Foundation ✅ complete
+> 2. Seed Hyderabad Dataset
+> 3. Map Experience
+> 4. Opportunity Foundation
+> 5. Company Intelligence
+>
+> **Consequence of reordering (content, not architecture, shifts):**
+> Opportunity now lands *after* Map Experience instead of before it, so:
+> - **Seed Hyderabad Dataset (now Slice 2)** seeds only `companies` +
+>   geolocation for each — no opportunities/roles yet, since `opportunities`
+>   doesn't exist until Slice 4. This also means Location (refinement #3 from
+>   Slice 1 review) is introduced here rather than in Map Experience — Slice
+>   2 is where geolocation data first enters the system, Slice 3 is where
+>   it's queried and displayed. See the dedicated
+>   `docs/features/phase1/slice-2-seed-hyderabad-dataset.md` spec.
+> - **Map Experience (now Slice 3)** ships nearby-company map + company cards
+>   + company detail page, and search **by location only** — search **by
+>   role** is dropped from this slice's scope (there's no `Opportunity` to
+>   search yet) and returns once Slice 4 lands.
+> - **Opportunity Foundation (now Slice 4)** absorbs seeding real Hyderabad
+>   job postings for the already-seeded companies (previously bundled into
+>   the old Slice 3), since there's no other slice left to do it in.
+> - **Company Intelligence (Slice 5)** is unaffected — still last, still
+>   additive to `CompanyDetail`.
 
-1. **Slice 1 — Company Foundation:** domain + contract + persistence +
-   `GET /companies`/`GET /companies/{id}`. No UI yet beyond a raw JSON check.
-2. **Slice 2 — Opportunity Foundation:** domain + contract + dedup +
-   provider port shape. Still no seed data — unit-tested with synthetic
-   fixtures.
-3. **Slice 3 — Seed Hyderabad Dataset:** real data flows through Slices 1–2
-   for the first time; idempotent seed script; this is the first slice with
-   real content to look at via the API.
-4. **Slice 4 — Map Experience:** the product's identity moment — anonymous
-   map + search + company cards + detail page, all backed by real data.
+Sequential, one slice at a time, each independently demoable, spec'd and
+approved before implementation, and committed separately (per the
+Development Strategy in the kickoff brief):
+
+1. **Slice 1 — Company Foundation** ✅ complete: domain + contract +
+   persistence + `GET /companies`/`GET /companies/{id}`. No UI yet beyond a
+   raw JSON/Swagger check.
+2. **Slice 2 — Seed Hyderabad Dataset** ✅ complete: `Location` value object,
+   `geo`'s first persistence, idempotent seed of 30 real Hyderabad companies
+   (well-distributed across all seven named localities) with resolvable
+   coordinates. Spec: `docs/features/phase1/slice-2-seed-hyderabad-dataset.md`.
+3. **Slice 3 — Map Experience:** the product's identity moment — anonymous
+   map + nearby-company query + company cards + detail page + search by
+   location, all backed by real seeded data.
+4. **Slice 4 — Opportunity Foundation:** domain + contract + dedup +
+   `JobProvider` port + a real seed of Hyderabad job postings for the
+   existing companies; search by role becomes possible from here.
 5. **Slice 5 — Company Intelligence:** enriches the Slice-1 `Company` model
-   and the Slice-4 detail page with factual profile fields.
+   and the Slice-3 detail page with factual profile fields.
 
 Each slice ends with: passing tests, zero contract drift, `lint-imports`
 green, updated docs (this spec's relevant section reconciled with
