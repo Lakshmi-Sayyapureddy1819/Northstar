@@ -104,3 +104,40 @@ Career GPS → Polaris.`
 Deferred until justified by user value (each via a new ADR): other cities and
 verticals, employer/user-contributed ingestion, D3 visualizations,
 LangGraph/PydanticAI, mobile, real-time features.
+
+## Phase 1 — in progress
+
+Spec: `docs/features/phase1/hyperlocal-career-navigation.md`. Status:
+`docs/roadmap/phase-1.md`. Delivered as five sequential slices (Company
+Foundation → Opportunity Foundation → Seed Hyderabad Dataset → Map Experience
+→ Company Intelligence), one at a time, each spec'd, implemented, verified,
+documented, and committed before the next begins.
+
+**Slice 1 — Company Foundation (complete).** `Company` established as the
+platform's aggregate root, designed for additive extensibility: later slices
+(offices/geo, Company Intelligence, and beyond — reviews, benefits, ESG,
+hiring velocity, campus hiring, internship/articleship programs, Career
+Universe, Polaris) attach new optional fields or related value objects
+without ever renaming or restructuring what Slice 1 shipped. Identity is
+split deliberately: `CompanyId` (stable, UUID) is the only thing referenced
+across the `contract.py` boundary or by a future `Opportunity`; `CompanySlug`
+is separate and mutable, for URLs only. This slice also introduced the
+repository's first real database dependency (SQLAlchemy + Alembic + psycopg)
+and its first migration, which per the blueprint's own §7 footnote triggered
+adding a DB migration-check job to CI alongside the existing API
+contract-drift check.
+
+Before merge, a Slice Boundary Review (via the `architecture-guardian`
+agent) checked the slice against five criteria: every new file belongs to
+`companies` or infrastructure/platform; no speculative abstractions; no
+future-phase functionality (geo, opportunities, seed data, map UI, Company
+Intelligence fields) leaked in; `Company` holds only plain factual fields; and
+zero coupling to `career_intelligence`/`resume`/`polaris`/`identity`/
+`profile`/`engagement`/`career_gps`, mechanically confirmed via
+`lint-imports`. Four of five checks passed outright; the fifth flagged a
+genuine finding — `SqlAlchemyCompanyReader`, a concrete adapter with zero
+callers this slice — which was removed rather than kept "for later." The
+`CompanyReader` contract type stays (Slice 1's own acceptance criteria
+required the read-model shapes to exist); only the unimplemented, unused
+adapter was cut. This is the pattern going forward: each slice gets an
+independent boundary review before merge, not just self-verification.

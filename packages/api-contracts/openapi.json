@@ -1,6 +1,143 @@
 {
   "components": {
     "schemas": {
+      "CompanyDetailResponse": {
+        "description": "Full company profile shape.",
+        "properties": {
+          "careers_page_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Careers Page Url"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "founded_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Founded Year"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "industry": {
+            "title": "Industry",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "website": {
+            "title": "Website",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "industry",
+          "website",
+          "careers_page_url",
+          "founded_year"
+        ],
+        "title": "CompanyDetailResponse",
+        "type": "object"
+      },
+      "CompanyListResponse": {
+        "description": "A page of company summaries.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CompanySummaryResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "limit",
+          "offset"
+        ],
+        "title": "CompanyListResponse",
+        "type": "object"
+      },
+      "CompanySummaryResponse": {
+        "description": "Card-sized company shape.",
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "industry": {
+            "title": "Industry",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "industry",
+          "description"
+        ],
+        "title": "CompanySummaryResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
       "HealthResponse": {
         "description": "Liveness payload.",
         "properties": {
@@ -29,6 +166,46 @@
         ],
         "title": "HealthResponse",
         "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
       }
     }
   },
@@ -39,6 +216,105 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/companies": {
+      "get": {
+        "operationId": "list_companies_companies_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List companies",
+        "tags": [
+          "companies"
+        ]
+      }
+    },
+    "/companies/{company_id}": {
+      "get": {
+        "operationId": "get_company_companies__company_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyDetailResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get company detail",
+        "tags": [
+          "companies"
+        ]
+      }
+    },
     "/health": {
       "get": {
         "description": "Report that the application is up. No external dependencies checked.",

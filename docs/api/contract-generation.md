@@ -66,3 +66,19 @@ assumed — surfacing the break at build time.
 - Type generation succeeds (`paths`, `components`, `operations`).
 - The web app builds against the generated types (`next build` green; `/health` consumes the typed client).
 - A backend contract change flows through: adding a field to `HealthResponse` regenerated `schema.ts` with the new field; reverting removed it.
+
+## Verified (Phase 1, Slice 1 — first real endpoints)
+
+- `GET /companies` and `GET /companies/{company_id}` regenerated the contract
+  cleanly (`paths: /companies, /companies/{company_id}, /health`); `tsc --noEmit`
+  on `apps/web` stayed green against the new `schema.ts` with no manual changes.
+- This is the first time the pipeline carried a real pagination envelope and a
+  path parameter (`company_id`) — see `docs/api/pagination.md` for the
+  convention it established.
+- Slice Boundary Review (pre-merge): confirmed both endpoints are thin HTTP
+  wrappers over `companies` application use cases only — no reach into any
+  other context, no business logic in the router. Nothing about the exposed
+  surface (`CompanySummaryResponse`/`CompanyDetailResponse`) changed as a
+  result of the review; the one fix it produced (removing the unused
+  `SqlAlchemyCompanyReader` adapter) was internal to `companies` and does not
+  touch the API contract.

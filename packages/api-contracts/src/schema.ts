@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+    "/companies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List companies */
+        get: operations["list_companies_companies_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/companies/{company_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get company detail */
+        get: operations["get_company_companies__company_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -29,6 +63,61 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /**
+         * CompanyDetailResponse
+         * @description Full company profile shape.
+         */
+        CompanyDetailResponse: {
+            /** Careers Page Url */
+            careers_page_url: string | null;
+            /** Description */
+            description: string;
+            /** Founded Year */
+            founded_year: number | null;
+            /** Id */
+            id: string;
+            /** Industry */
+            industry: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /** Website */
+            website: string;
+        };
+        /**
+         * CompanyListResponse
+         * @description A page of company summaries.
+         */
+        CompanyListResponse: {
+            /** Items */
+            items: components["schemas"]["CompanySummaryResponse"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
+        /**
+         * CompanySummaryResponse
+         * @description Card-sized company shape.
+         */
+        CompanySummaryResponse: {
+            /** Description */
+            description: string;
+            /** Id */
+            id: string;
+            /** Industry */
+            industry: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
          * HealthResponse
          * @description Liveness payload.
          */
@@ -42,6 +131,19 @@ export interface components {
             /** Version */
             version: string;
         };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -51,6 +153,69 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    list_companies_companies_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_company_companies__company_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_health_get: {
         parameters: {
             query?: never;

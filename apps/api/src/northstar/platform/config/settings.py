@@ -31,7 +31,9 @@ class Settings(BaseSettings):
     debug: bool = False
 
     # Infrastructure connection strings (behind ports; consumed in later phases).
-    database_url: str = "postgresql://northstar:northstar@localhost:5432/northstar"
+    database_url: str = (
+        "postgresql+psycopg://northstar:northstar@localhost:5432/northstar"
+    )
     redis_url: str = "redis://localhost:6379/0"
 
 

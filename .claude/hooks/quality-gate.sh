@@ -26,7 +26,13 @@ py_tool() {
 # --- Python: ruff, mypy (strict), import-linter (the boundary rule) ---
 if [ -d "apps/api" ]; then
   ruff_bin="$(py_tool ruff)"; [ -n "$ruff_bin" ] && { "$ruff_bin" check apps/api || status=1; }
-  mypy_bin="$(py_tool mypy)"; [ -n "$mypy_bin" ] && { "$mypy_bin" apps/api/src || status=1; }
+  mypy_bin="$(py_tool mypy)"
+  if [ -n "$mypy_bin" ]; then
+    mypy_abs="$(cd "$(dirname "$mypy_bin")" && pwd)/$(basename "$mypy_bin")"
+    # mypy discovers its config from CWD, not from the target path — cd into
+    # apps/api so it finds pyproject.toml's [tool.mypy] (strict, tests excluded).
+    (cd apps/api && "$mypy_abs" src) || status=1
+  fi
   lint_imports_bin="$(py_tool lint-imports)"
   if [ -n "$lint_imports_bin" ]; then
     lint_imports_abs="$(cd "$(dirname "$lint_imports_bin")" && pwd)/$(basename "$lint_imports_bin")"

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from northstar.api.routers import health
+from northstar.api.routers import companies, health
 from northstar.platform.config import get_settings
 
 
@@ -24,6 +24,7 @@ def create_app() -> FastAPI:
         ),
     )
     app.include_router(health.router)
+    app.include_router(companies.router)
     return app
 
 
