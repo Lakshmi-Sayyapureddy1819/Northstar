@@ -2,6 +2,9 @@
 
 > Introduced in Phase 1, Slice 1 (`GET /companies`) — the first endpoint that
 > needed it. Applies to every future list endpoint (opportunities, etc.).
+> Slice 3's `GET /companies/nearby` reuses this convention unchanged, plus
+> its own `lat`/`lng`/`radius_km` query params — proof the convention
+> generalizes to a second list endpoint without modification.
 
 ## Convention: `limit` / `offset` query parameters
 

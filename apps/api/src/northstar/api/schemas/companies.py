@@ -39,3 +39,20 @@ class CompanyListResponse(BaseModel):
     items: list[CompanySummaryResponse]
     limit: int
     offset: int
+
+
+class NearbyCompanyResponse(CompanySummaryResponse):
+    """A company summary plus its coordinates and distance from the search
+    origin — the map needs real coordinates to place a marker."""
+
+    latitude: float
+    longitude: float
+    distance_km: float
+
+
+class NearbyCompanyListResponse(BaseModel):
+    """A page of nearby-company results, ordered by distance."""
+
+    items: list[NearbyCompanyResponse]
+    limit: int
+    offset: int

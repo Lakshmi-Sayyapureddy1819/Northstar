@@ -12,9 +12,17 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from northstar.contexts.companies.application.use_cases import GetCompany, ListCompanies
+from northstar.contexts.companies.application.use_cases import (
+    GetCompany,
+    GetCompanyBySlug,
+    ListCompanies,
+)
 from northstar.contexts.companies.infrastructure.repository import (
     SqlAlchemyCompanyRepository,
+)
+from northstar.contexts.geo.application.use_cases import FindNearbyCompanies
+from northstar.contexts.geo.infrastructure.repository import (
+    SqlAlchemyCompanyLocationRepository,
 )
 from northstar.platform.config import Settings, get_settings
 from northstar.platform.db import get_session
@@ -50,3 +58,26 @@ def list_companies_use_case_provider(
     ],
 ) -> ListCompanies:
     return ListCompanies(repository=repository)
+
+
+def get_company_by_slug_use_case_provider(
+    repository: Annotated[
+        SqlAlchemyCompanyRepository, Depends(company_repository_provider)
+    ],
+) -> GetCompanyBySlug:
+    return GetCompanyBySlug(repository=repository)
+
+
+def company_location_repository_provider(
+    session: Annotated[Session, Depends(db_session_provider)],
+) -> SqlAlchemyCompanyLocationRepository:
+    return SqlAlchemyCompanyLocationRepository(session)
+
+
+def find_nearby_companies_use_case_provider(
+    repository: Annotated[
+        SqlAlchemyCompanyLocationRepository,
+        Depends(company_location_repository_provider),
+    ],
+) -> FindNearbyCompanies:
+    return FindNearbyCompanies(repository=repository)

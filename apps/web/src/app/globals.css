@@ -43,12 +43,31 @@
   --ring: oklch(0.556 0 0);
 }
 
-/* Brand theme seam — override semantic tokens here when the palette is defined. */
-.theme-brand {
-  /* NorthStar brand tokens land in the design-language phase. */
-}
+/*
+ * NorthStar brand palette (Phase 1, Slice 3 — Visual Design Direction,
+ * docs/features/phase1/slice-3-map-experience.md). Wayfinding-instrument
+ * inspired: star charts, brass sextants, coordinate readouts — not generic
+ * sci-fi. This is the platform's actual visual identity, applied globally
+ * (`theme-brand dark` on <html>, layout.tsx), not a one-page skin.
+ */
+.theme-brand,
 .theme-brand.dark {
-  /* Brand + dark overrides. */
+  color-scheme: dark;
+  --ns-ink: oklch(0.16 0.02 265); /* #0B0F1A-ish — near-black indigo */
+  --ns-surface: oklch(0.22 0.03 265); /* #141B2E-ish — elevated surface */
+  --ns-mist: oklch(0.64 0.02 265); /* #8A93A8-ish — muted secondary text */
+  --ns-paper: oklch(0.96 0.01 90); /* #F3F1EA-ish — warm off-white */
+  --ns-gold: oklch(0.78 0.12 75); /* #D9A552-ish — North Star accent */
+  --ns-teal: oklch(0.7 0.09 185); /* #4FB6A8-ish — wayfinding accent */
+
+  --background: var(--ns-ink);
+  --foreground: var(--ns-paper);
+  --primary: var(--ns-gold);
+  --primary-foreground: var(--ns-ink);
+  --muted: var(--ns-surface);
+  --muted-foreground: var(--ns-mist);
+  --border: oklch(1 0 0 / 10%);
+  --ring: var(--ns-gold);
 }
 
 @theme inline {
@@ -60,9 +79,16 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --color-ns-surface: var(--ns-surface);
+  --color-ns-mist: var(--ns-mist);
+  --color-ns-gold: var(--ns-gold);
+  --color-ns-teal: var(--ns-teal);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
+  --font-display: var(--font-display);
+  --font-ui: var(--font-ui);
+  --font-mono: var(--font-mono);
 }
 
 /* Accessible default: honor users who ask for reduced motion (project-wide). */

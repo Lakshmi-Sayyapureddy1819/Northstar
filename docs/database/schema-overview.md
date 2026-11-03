@@ -111,6 +111,15 @@ survive into the committed migration — strip them the same way.
   an additive change (more rows, a new key shape) for whenever real user
   value justifies it.
 
+## Slice 3 (Map Experience) — no schema change
+
+Slice 3 added a query (`ST_DWithin`/`ST_Distance` against `company_locations`)
+and two new API endpoints, but **no new table and no new migration** —
+Slice 2's schema was already the right shape. `alembic check` confirmed no
+drift after this slice. This is the first slice to prove the `company_locations`
+table Slice 2 created is actually fit for its intended purpose (a real,
+live nearby-company query), not just a placeholder.
+
 ## Slice Boundary Review (pre-merge)
 
 An `architecture-guardian` review before merging Slice 1 confirmed: the

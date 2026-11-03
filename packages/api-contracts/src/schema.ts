@@ -21,6 +21,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/companies/by-slug/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get company detail by slug (deep-linkable route) */
+        get: operations["get_company_by_slug_companies_by_slug__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/companies/nearby": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find nearby companies */
+        get: operations["nearby_companies_companies_nearby_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/companies/{company_id}": {
         parameters: {
             query?: never;
@@ -131,6 +165,41 @@ export interface components {
             /** Version */
             version: string;
         };
+        /**
+         * NearbyCompanyListResponse
+         * @description A page of nearby-company results, ordered by distance.
+         */
+        NearbyCompanyListResponse: {
+            /** Items */
+            items: components["schemas"]["NearbyCompanyResponse"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
+        /**
+         * NearbyCompanyResponse
+         * @description A company summary plus its coordinates and distance from the search
+         *     origin — the map needs real coordinates to place a marker.
+         */
+        NearbyCompanyResponse: {
+            /** Description */
+            description: string;
+            /** Distance Km */
+            distance_km: number;
+            /** Id */
+            id: string;
+            /** Industry */
+            industry: string;
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -172,6 +241,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CompanyListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_company_by_slug_companies_by_slug__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    nearby_companies_companies_nearby_get: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+                radius_km?: number;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NearbyCompanyListResponse"];
                 };
             };
             /** @description Validation Error */

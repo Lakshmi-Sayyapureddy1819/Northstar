@@ -18,7 +18,7 @@ note and in `docs/features/phase1/slice-2-seed-hyderabad-dataset.md`.
 |---|-------|--------|
 | 1 | Company Foundation | ✅ Complete |
 | 2 | Seed Hyderabad Dataset | ✅ Complete |
-| 3 | Map Experience | ⬜ Not started |
+| 3 | Map Experience | ✅ Complete |
 | 4 | Opportunity Foundation | ⬜ Not started |
 | 5 | Company Intelligence | ⬜ Not started |
 
@@ -160,3 +160,84 @@ of every future seed reaching around the contract.
 | 6 | Cross-slice: ruff/black/mypy --strict/lint-imports/pytest all pass | ✅ Complete |
 | 7 | Cross-slice: `alembic upgrade head` + `alembic check` green for the new migration | ✅ Complete |
 | 8 | Slice Boundary Review passes before merge | ✅ Complete — 7/7 passed, 1 doc gap closed, 1 note recorded |
+
+## Slice 3 — Map Experience
+
+Spec: `docs/features/phase1/slice-3-map-experience.md`.
+
+- `geo` gained the read port Slices 1/2 deliberately deferred:
+  `FindNearbyCompanies` (`application/use_cases.py`), `NearbyQuery`/
+  `NearbyResult` in `contract.py` (defined directly in the contract, mirroring
+  `companies.contract`'s pattern — not imported from application), and
+  `SqlAlchemyCompanyLocationRepository.find_nearby` using `ST_DWithin` +
+  `ST_Distance` against Slice 2's `company_locations`. **No new migration** —
+  proof that table was already the right shape.
+- New endpoints: `GET /companies/nearby` (composes `geo`'s nearby query with
+  `companies`' `GetCompany` to hydrate `CompanySummary` + `distance_km` +
+  `latitude`/`longitude` per result) and `GET /companies/by-slug/{slug}`
+  (the deep-link route's lookup, backed by Slice 1's existing
+  `CompanyRepository.get_by_slug`). Both registered ahead of
+  `/{company_id}` in the router to avoid UUID-parsing shadowing.
+- Frontend: first real feature module, `apps/web/src/features/map/` —
+  Mapbox GL (client-only dynamic import, `ssr:false`), custom "career node"
+  markers (industry-tinted glow circles, not default pins — native
+  clustering via `react-map-gl`'s declarative `Source`/`Layer`), a locality
+  picker + "Near Me" + client-side industry filter chips (derived from the
+  real seeded `industry` field, no schema change), a company detail panel
+  (drawer) plus the deep-linkable `/companies/[slug]` route, and a NorthStar
+  brand token system (`globals.css` `.theme-brand`) with three deliberately
+  chosen typefaces (Fraunces/Manrope/IBM Plex Mono) replacing the Phase 0
+  placeholder home page entirely.
+- Four real bugs caught only by running the full stack: missing CORS
+  middleware (fixed with a `GET`-only `CORSMiddleware`), a missing
+  `latitude`/`longitude` on the nearby response (the map can't place a
+  marker from distance alone), `prefers-reduced-motion` not actually
+  reaching Framer Motion's JS-driven animations (fixed with
+  `useReducedMotion()` at three call sites), and a missing `<main>` landmark.
+  See the feature spec's "As implemented" section for full detail.
+
+**Verification:** backend — `ruff`/`black --check`/`mypy --strict`/
+`lint-imports`/`pytest` all green (48/48 tests); `alembic check` clean (no
+schema change). Frontend — `tsc --noEmit`/`eslint`/Prettier all clean; 12/12
+Vitest unit tests; 7/7 Playwright e2e tests against the real backend and
+real seeded data (full anonymous journey, "Near Me" denied → graceful
+fallback, full keyboard-only reachability into the detail dialog); full
+`turbo run lint typecheck test build` pipeline green (4/4 tasks); production
+build confirms Mapbox GL is code-split off the main bundle (162kB total
+first-load JS — far too small to include Mapbox GL, which alone is
+200KB+). Performance: Lighthouse via chrome-devtools MCP wasn't reachable in
+this environment; a Playwright-measured first-contentful-paint (~100ms)
+served as an honest proxy, not a substitute for the real audit — flagged
+explicitly as a gap to close when browser tooling is available. OpenAPI
+regenerated with exactly the two new paths, zero unexpected drift.
+
+**Slice Boundary Review (pre-merge, `architecture-guardian`):** CLEAN —
+every check passed (module boundaries, contract-only imports, Facts-First,
+cloud-agnostic, API-contracts-as-truth, anonymous-first, Living
+Documentation, ADR requirements, PRD traceability), independently
+re-verified rather than taken on faith: the reviewer re-ran `lint-imports`
+(2/2 kept), `pytest` (green), and `tsc --noEmit` (clean) itself. One
+non-blocking style note: `api/routers/companies.py` imported `Location`
+from `geo.domain.value_objects` instead of the now-available
+`geo.contract` — fixed (one-line import change), re-verified green after
+the fix.
+
+## Acceptance criteria checklist (Slice 3 — Map Experience)
+
+| # | Acceptance criterion | Status |
+|---|---|---|
+| 1 | Mapbox integration: client-only, code-split, token via env | ✅ Complete |
+| 2 | Public home page replaces Phase 0 placeholder, map-dominant layout | ✅ Complete |
+| 3 | Career nodes (custom markers) — no default Mapbox pins | ✅ Complete |
+| 4 | Marker clustering (native, no extra library) | ✅ Complete |
+| 5 | Map-load animation, `prefers-reduced-motion` respected | ✅ Complete (fixed a real gap — see above) |
+| 6 | Company cards: locality, industry, distance, honest reserved score slot (no fabricated rating) | ✅ Complete |
+| 7 | Filter chips (industry, client-side, companies only) | ✅ Complete |
+| 8 | Company detail panel + deep-linkable `/companies/[slug]` | ✅ Complete |
+| 9 | Search by location (locality picker, curated, not a geocoder) | ✅ Complete |
+| 10 | "Near Me" with graceful fallback (denied/unsupported/error) | ✅ Complete — verified live in Playwright |
+| 11 | Responsive layout | ✅ Complete |
+| 12 | Accessibility: full keyboard/screen-reader path independent of the map, `<main>` landmark | ✅ Complete — verified live in Playwright |
+| 13 | Performance: LCP target, code-split bundle | ⚠️ Partially verified — bundle size confirmed; full Lighthouse LCP audit not run (browser tooling unavailable), FCP proxy measured instead |
+| 14 | Career Universe CTA present, disabled, zero Phase 2 logic | ✅ Complete |
+| 15 | Cross-slice: all quality gates + tests pass | ✅ Complete |

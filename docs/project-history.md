@@ -180,3 +180,41 @@ than through `companies.contract`, because Slice 1 never shipped a write use
 case (only reads). Pre-authorized by the approved spec for this slice; if
 Slice 4's opportunity seed repeats the same shortcut, that's the signal
 `companies` actually needs a `CreateCompany` application use case.
+
+**Slice 3 — Map Experience (complete).** The product's identity moment:
+the first thing a visitor to `localhost:3100` sees is now a real, live map
+of Hyderabad companies, not a Phase 0 placeholder. `geo` gained the read
+port the Slice 1/2 reviews deliberately deferred (`FindNearbyCompanies`,
+`ST_DWithin`/`ST_Distance` against Slice 2's `company_locations` — no new
+migration needed, proof that table was already the right shape). The
+frontend got its first real feature module (`features/map/`): Mapbox GL
+(client-only, code-split off the critical path), custom "career node"
+markers (industry-tinted glow, not default pins — the visual seed of Phase
+2's "nodes become planets"), native clustering, a locality picker + "Near
+Me" + client-side industry filter chips, a company detail panel, and a
+deep-linkable `/companies/[slug]` route.
+
+Four real bugs surfaced only by actually running the full stack, not by
+reading the code: (1) **no CORS middleware existed anywhere in the
+backend** — every browser-side fetch from the frontend's origin would have
+been silently blocked; invisible to `curl`, which doesn't enforce CORS —
+fixed with a `GET`-only `CORSMiddleware`; (2) the nearby-query response
+needed `latitude`/`longitude` added mid-slice — a distance alone can't place
+a map marker, a gap the original spec didn't anticipate; (3)
+`prefers-reduced-motion` looked handled (a global CSS rule already existed)
+but that rule only catches native CSS animations — it does nothing for
+Framer Motion's JS-driven animations, which needed `useReducedMotion()`
+wired in explicitly at three call sites; (4) the page wasn't wrapped in a
+`<main>` landmark, a direct, explicit requirement of `apps/web/CLAUDE.md`'s
+accessibility standard. All four were caught and fixed before the Slice
+Boundary Review, not after.
+
+Verified live: 7 Playwright e2e tests against the real backend and real
+seeded data (the full anonymous journey, "Near Me" denied → graceful
+fallback, full keyboard-only reachability into the detail dialog), 12 Vitest
+unit tests, and the full `turbo run lint typecheck test build` pipeline
+green. One verification gap acknowledged rather than papered over: browser
+tooling (Lighthouse via chrome-devtools MCP) wasn't reachable in this
+environment, so the full Lighthouse LCP audit specified in the spec's
+Testing Strategy couldn't run — a Playwright-measured first-contentful-paint
+(~100ms) stood in as an honest proxy, not a substitute claim.

@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     )
     redis_url: str = "redis://localhost:6379/0"
 
+    # Origins allowed to call the API from a browser (ADR 0004's Core tier is
+    # anonymous and served to `apps/web`, a different origin in local dev).
+    cors_allowed_origins: list[str] = ["http://localhost:3100"]
+
 
 @lru_cache
 def get_settings() -> Settings:

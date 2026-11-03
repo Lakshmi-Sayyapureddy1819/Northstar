@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 from northstar.contexts.companies.application.ports import CompanyRepository
 from northstar.contexts.companies.domain.company import Company
-from northstar.contexts.companies.domain.value_objects import CompanyId
+from northstar.contexts.companies.domain.value_objects import CompanyId, CompanySlug
 from northstar.shared_kernel import DomainError, Err, Ok, Result
 
 
@@ -28,6 +28,25 @@ class GetCompany:
                 DomainError(
                     code="company_not_found",
                     message=f"no company with id {company_id}",
+                )
+            )
+        return Ok(company)
+
+
+@dataclass(frozen=True, slots=True)
+class GetCompanyBySlug:
+    """Fetch a single company by its (mutable, SEO) slug — for the
+    deep-linkable `/companies/[slug]` detail route (Slice 3)."""
+
+    repository: CompanyRepository
+
+    def execute(self, slug: CompanySlug) -> Result[Company, DomainError]:
+        company = self.repository.get_by_slug(slug)
+        if company is None:
+            return Err(
+                DomainError(
+                    code="company_not_found",
+                    message=f"no company with slug {slug}",
                 )
             )
         return Ok(company)

@@ -437,9 +437,10 @@ Development Strategy in the kickoff brief):
    `geo`'s first persistence, idempotent seed of 30 real Hyderabad companies
    (well-distributed across all seven named localities) with resolvable
    coordinates. Spec: `docs/features/phase1/slice-2-seed-hyderabad-dataset.md`.
-3. **Slice 3 — Map Experience:** the product's identity moment — anonymous
-   map + nearby-company query + company cards + detail page + search by
-   location, all backed by real seeded data.
+3. **Slice 3 — Map Experience** ✅ complete: the product's identity moment —
+   anonymous map + nearby-company query + custom career-node markers +
+   company cards + detail page/deep-link + search by location, all backed by
+   real seeded data. Spec: `docs/features/phase1/slice-3-map-experience.md`.
 4. **Slice 4 — Opportunity Foundation:** domain + contract + dedup +
    `JobProvider` port + a real seed of Hyderabad job postings for the
    existing companies; search by role becomes possible from here.

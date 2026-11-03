@@ -8,6 +8,7 @@ logic itself.
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from northstar.api.routers import companies, health
 from northstar.platform.config import get_settings
@@ -22,6 +23,12 @@ def create_app() -> FastAPI:
         description=(
             "NorthStar API — modular monolith. See docs/architecture/blueprint.md."
         ),
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_allowed_origins,
+        allow_methods=["GET"],
+        allow_headers=["*"],
     )
     app.include_router(health.router)
     app.include_router(companies.router)

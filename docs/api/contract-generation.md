@@ -91,3 +91,24 @@ assumed — surfacing the break at build time.
   `openapi.json` and `schema.ts`), confirmed explicitly rather than assumed —
   worth noting as a slice can legitimately touch domain/infrastructure code
   without the contract drift check having anything to say about it.
+
+## Verified (Phase 1, Slice 3 — Map Experience, two new endpoints)
+
+- `GET /companies/nearby` and `GET /companies/by-slug/{slug}` regenerated
+  cleanly (`paths: /companies, /companies/by-slug/{slug}, /companies/nearby,
+  /companies/{company_id}, /health`). The frontend's typed client
+  (`openapi-fetch`) consumed both with zero hand-written interfaces —
+  `useNearbyCompanies`/`useCompanyDetail` (`apps/web/src/features/map/`)
+  infer every field from the generated `paths`.
+- `NearbyCompanyResponse` gained `latitude`/`longitude` fields mid-slice, not
+  anticipated in the original spec — the map cannot place a marker with a
+  distance alone. This is the first slice where building the frontend
+  against the contract caught a real gap in the backend response shape
+  before it shipped, rather than after.
+- First slice where the frontend actually runs against the API cross-origin
+  (`localhost:3100` → `localhost:8000`) — exposed a real, previously-latent
+  bug: no CORS middleware existed on the backend at all. `curl`-based smoke
+  tests never caught it (curl doesn't enforce CORS); only building and
+  running the real frontend did. Fixed with `CORSMiddleware` restricted to
+  `GET` (every endpoint in this slice is read-only) and a
+  `cors_allowed_origins` setting.

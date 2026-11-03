@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Protocol
 
 from northstar.contexts.companies.contract import CompanyId
+from northstar.contexts.geo.contract import NearbyQuery, NearbyResult
 from northstar.contexts.geo.domain.value_objects import Location
 
 
@@ -20,3 +21,7 @@ class CompanyLocationRepository(Protocol):
     def get_by_company_id(self, company_id: CompanyId) -> Location | None: ...
 
     def set_for_company(self, company_id: CompanyId, location: Location) -> None: ...
+
+    def find_nearby(
+        self, query: NearbyQuery, *, limit: int = 50, offset: int = 0
+    ) -> list[NearbyResult]: ...
