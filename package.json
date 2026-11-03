@@ -20,7 +20,7 @@
     "contracts:generate": "pnpm run openapi:export && pnpm --filter @northstar/api-contracts run generate"
   },
   "devDependencies": {
-    "prettier": "^3.4.2",
-    "turbo": "^2.3.3"
+    "prettier": "^3.9.10",
+    "turbo": "^2.11.10"
   }
 }
