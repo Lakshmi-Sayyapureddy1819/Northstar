@@ -25,7 +25,7 @@
     "@northstar/config-typescript": "workspace:*",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9.17.0",
-    "typescript": "^5.7.3"
+    "eslint": "^10.14.0",
+    "typescript": "^7.0.2"
   }
 }
